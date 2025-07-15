@@ -1,0 +1,29 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Build Docker Images') {
+            steps {
+                echo '🔨 Building Docker images...'
+                sh 'docker build -t order-service ./order-service'
+                sh 'docker build -t payment-service ./payment-service'
+            }
+        }
+
+        stage('Stop Old Containers') {
+            steps {
+                echo '🧹 Stopping old containers...'
+                sh 'docker rm -f order-service || true'
+                sh 'docker rm -f payment-service || true'
+            }
+        }
+
+        stage('Run New Containers') {
+            steps {
+                echo '🚀 Running containers...'
+                sh 'docker run -d -p 8001:80 --name order-service order-service'
+                sh 'docker run -d -p 8002:80 --name payment-service payment-service'
+            }
+        }
+    }
+}

@@ -5,24 +5,24 @@ pipeline {
         stage('Build Docker Images') {
             steps {
                 echo '🔨 Building Docker images...'
-                sh 'docker build -t order-service ./order-service'
-                sh 'docker build -t payment-service ./payment-service'
+                bat 'docker build -t order-service ./order-service'
+                bat 'docker build -t payment-service ./payment-service'
             }
         }
 
         stage('Stop Old Containers') {
             steps {
                 echo '🧹 Stopping old containers...'
-                sh 'docker rm -f order-service || true'
-                sh 'docker rm -f payment-service || true'
+                bat 'docker rm -f order-service || exit 0'
+                bat 'docker rm -f payment-service || exit 0'
             }
         }
 
         stage('Run New Containers') {
             steps {
                 echo '🚀 Running containers...'
-                sh 'docker run -d -p 8001:80 --name order-service order-service'
-                sh 'docker run -d -p 8002:80 --name payment-service payment-service'
+                bat 'docker run -d -p 8001:80 --name order-service order-service'
+                bat 'docker run -d -p 8002:80 --name payment-service payment-service'
             }
         }
     }
